@@ -246,6 +246,9 @@ function TryToMakeAWinner(selectedAnimal) {
       .querySelector("#onlyonekind [data-action=remove1]")
       .addEventListener("click", clickRemoveOther);
 
+    //add name to button
+    document.querySelector("#onlyonekind .animal1").textContent = other.name;
+
     //if ignore - do nothing..
     function closeDialog() {
       document.querySelector("#onlyonekind").classList.add("dialog");
@@ -280,6 +283,12 @@ function TryToMakeAWinner(selectedAnimal) {
         .querySelector("#onlytwowinners [data-action=remove2]")
         .addEventListener("click", clickRemoveB);
     }
+
+    // show names next to buttons
+    document.querySelector("#onlytwowinners .animal1").textContent =
+      winnerA.name;
+    document.querySelector("#onlytwowinners .animal2").textContent =
+      winnerB.name;
 
     //if ignore - do nothing..
     function closeDialog() {
