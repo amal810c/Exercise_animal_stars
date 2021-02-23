@@ -11,6 +11,7 @@ const Animal = {
   type: "",
   age: 0,
   star: false,
+  winner: false,
 };
 
 const settings = {
@@ -197,6 +198,125 @@ function displayAnimal(animal) {
     buildList();
   }
 
+  //winners
+  clone.querySelector("[data-field=winner]").dataset.winner = animal.winner;
+  clone
+    .querySelector("[data-field=winner]")
+    .addEventListener("click", clickWinner);
+  function clickWinner() {
+    if (animal.winner === true) {
+      animal.winner = false;
+    } else {
+      TryToMakeAWinner(animal);
+    }
+
+    buildList();
+  }
+
   // append clone to list
   document.querySelector("#list tbody").appendChild(clone);
+}
+
+function TryToMakeAWinner(selectedAnimal) {
+  const winners = allAnimals.filter((animal) => animal.winner);
+
+  const numberOfWinners = winners.length;
+  const other = winners
+    .filter((animal) => animal.type === selectedAnimal.type)
+    .shift();
+
+  //if there is another of the same type
+  if (other !== undefined) {
+    console.log("There cane by only one winner of each type!");
+    removeOther(other);
+  } else if (numberOfWinners >= 2) {
+    console.log("There can only be two winners!");
+    removeAorB(winners[0], winners[1]);
+  } else {
+    makeWinner(selectedAnimal);
+  }
+
+  function removeOther(other) {
+    //ask the user to ignore ore remove the other
+    document.querySelector("#onlyonekind").classList.remove("dialog");
+    document
+      .querySelector("#onlyonekind .closebutton")
+      .addEventListener("click", closeDialog);
+    document
+      .querySelector("#onlyonekind [data-action=remove1]")
+      .addEventListener("click", clickRemoveOther);
+
+    //if ignore - do nothing..
+    function closeDialog() {
+      document.querySelector("#onlyonekind").classList.add("dialog");
+      document
+        .querySelector("#onlyonekind .closebutton")
+        .removeEventListener("click", closeDialog);
+      document
+        .querySelector("#onlyonekind [data-action=remove1]")
+        .removeEventListener("click", clickRemoveOther);
+    }
+
+    //if remove other:
+    function clickRemoveOther() {
+      removeWinner(other);
+      makeWinner(selectedAnimal);
+      buildList();
+      closeDialog();
+    }
+  }
+
+  function removeAorB(winnerA, winnerB) {
+    //aske the user to ignore og remove a or b
+    {
+      document.querySelector("#onlytwowinners").classList.remove("dialog");
+      document
+        .querySelector("#onlytwowinners .closebutton")
+        .addEventListener("click", closeDialog);
+      document
+        .querySelector("#onlytwowinners [data-action=remove1]")
+        .addEventListener("click", clickRemoveA);
+      document
+        .querySelector("#onlytwowinners [data-action=remove2]")
+        .addEventListener("click", clickRemoveB);
+    }
+
+    //if ignore - do nothing..
+    function closeDialog() {
+      document.querySelector("#onlytwowinners").classList.add("dialog");
+      document
+        .querySelector("#onlytwowinners .closebutton")
+        .removeEventListener("click", closeDialog);
+      document
+        .querySelector("#onlytwowinners [data-action=remove1]")
+        .removeEventListener("click", clickRemoveA);
+      document
+        .querySelector("#onlytwowinners [data-action=remove2]")
+        .removeEventListener("click", clickRemoveB);
+    }
+
+    function clickRemoveA() {
+      //if remove a:
+      removeWinner(winnerA);
+      makeWinner(selectedAnimal);
+      buildList();
+      closeDialog();
+    }
+
+    function clickRemoveB() {
+      //else - if remove b:
+      removeWinner(winnerB);
+      makeWinner(selectedAnimal);
+      buildList();
+      closeDialog();
+    }
+  }
+
+  function removeWinner(winnerAnimal) {
+    winnerAnimal.winner = false;
+  }
+
+  function makeWinner(animal) {
+    animal.winner = true;
+  }
 }
